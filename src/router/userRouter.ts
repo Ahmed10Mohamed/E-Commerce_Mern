@@ -20,4 +20,5 @@ import { register, userLogin } from "../services/userService";
      const {statusCode ,data} = await userLogin({email,password})
      res.status(statusCode).send(data);
   })
- export default router;
+
+  export default router;
