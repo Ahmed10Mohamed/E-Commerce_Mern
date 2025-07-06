@@ -1,4 +1,4 @@
-import { cartModel } from "../models/cartModel"
+import { cartModel, ICart, ICartItem } from "../models/cartModel"
 import productModel from "../models/productModels";
 
 interface createCartForUser{
@@ -26,6 +26,23 @@ export const activeCartForUser = async ({userId}:activeCartForUser ) =>{
     }
 
     return cart;
+}
+interface clearCart{
+  userId:string
+}
+export const clearCart = async({userId}:clearCart)=>{
+     const cart = await activeCartForUser({userId})
+     cart.items =[];
+     cart.totalAmount = 0
+     const updateCart = await cart.save();
+     return {
+      statusCode: 200,
+      data: {
+        status: true,
+        message: "clear item from cart success",
+        data: updateCart,
+      }
+    };
 }
 interface itemsCartData{
     productId  : any;
@@ -125,17 +142,12 @@ interface updateItemsCart{
             }
           };
     }
-      // i went to get all item in cart with out this item
+      //  get all item in cart with out this item
       const otherCartItem = Cart.items.filter((p) => p.product.toString() !== productId)
 
       // calc total of other item in cart
 
-      let total = otherCartItem.reduce((sum,product) =>{
-          sum += product.quantity * product.unitPrice
-          return sum
-      },0)
-      
-
+      let total = calcCartTotalItem({cartItems: otherCartItem})
        // in callBack function add 0 => this main start from 0 
       // update quantity
       existInCart.quantity = quantity;
@@ -154,3 +166,58 @@ interface updateItemsCart{
       },
     };
 }
+interface deleteItemInCart{
+  productId  : any;
+  userId   : string;
+}
+export const deleteItemCart = async ({userId,productId}:deleteItemInCart) =>{
+     const Cart = await activeCartForUser({userId})
+
+    //check this item not found
+    const existInCart = Cart.items.find((p) => p.product.toString() === productId);
+    if(!existInCart){
+        return {
+            statusCode: 400,
+            data: {
+              status: false,
+              message: "this item not found in cart!"
+            }
+          };
+      }
+           
+            //  get all item in cart with out this item
+          const otherCartItem = Cart.items.filter(
+            (p) => p.product.toString() !== productId
+          );
+            //  update item in cart
+          const total = calcCartTotalItem({cartItems: otherCartItem})
+            Cart.items = otherCartItem
+            // update totalAmount
+            Cart.totalAmount = total;
+            // console.log(total);
+            const deletedCart = await Cart.save();
+        
+            return {
+              statusCode: 200,
+              data: {
+                status: true,
+                message: "Product deleted in cart",
+                data: deletedCart,
+              },
+            };
+    
+}
+
+    const calcCartTotalItem = ({
+      cartItems,
+    }: {
+      cartItems: ICartItem[];
+    }) => {
+      // calc total of other item in cart
+      const total = cartItems.reduce((sum, product) => {
+        sum += product.quantity * product.unitPrice;
+        return sum;
+      }, 0);
+      return total;
+    };
+    
