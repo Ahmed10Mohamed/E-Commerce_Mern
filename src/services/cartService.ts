@@ -1,4 +1,5 @@
 import { cartModel, ICart, ICartItem } from "../models/cartModel"
+import { IOrderItem, orderModel } from "../models/orderModel";
 import productModel from "../models/productModels";
 
 interface createCartForUser{
@@ -220,4 +221,65 @@ export const deleteItemCart = async ({userId,productId}:deleteItemInCart) =>{
       }, 0);
       return total;
     };
-    
+
+    interface checkout{
+      userId:string,
+      address:string
+    }
+    export const checkout = async  ({userId,address}:checkout)=>
+      {
+        if(!address){
+          return {
+            statusCode: 400,
+            data: {
+              status: false,
+              message: "please add your address"
+            }
+          };
+          }
+          const cart = await activeCartForUser({userId});
+          const orderItemsData: IOrderItem[] = []
+          //  Loop cartItems and create orderItems
+          for(const item of cart.items){
+            const product = await productModel.findById(item.product)
+            
+            if(!product){
+                  return {
+                    statusCode: 400,
+                    data: {
+                      status: false,
+                      message: "product not found"
+                    }
+                  };
+            }
+            const orderItems: IOrderItem ={
+                productTitle : product.title,
+                productImage : product.image,
+                unitPrice    : item.unitPrice,
+                quantity     : item.quantity
+            }
+            orderItemsData.push(orderItems)
+          }
+          // console.log(orderItemsData);
+          const order = await orderModel.create({
+            orderItems: orderItemsData,
+            total:cart.totalAmount,
+            address,
+            userId
+          })
+          // save order
+          await order.save()
+          // update cart status
+
+          cart.status ="completed";
+          await cart.save();
+          return {
+            statusCode: 200,
+            data: {
+              status: true,
+              message: "create order success",
+              data: order,
+            },
+          };
+   
+    }
