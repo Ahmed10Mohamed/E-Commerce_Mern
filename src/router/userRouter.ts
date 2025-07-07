@@ -3,22 +3,27 @@ import express from "express";
 import { register, userLogin } from "../services/userService";
 
  const router = express.Router();
-
- router.get("/",(req,res) => {
-      res.send("hello")
- })
  router.post("/register",async(req,res) => {
-    const dataBody = req.body;
-
-    const {statusCode,data} = await register(dataBody);
-
-    res.status(statusCode).send(data)
+    try {
+       const dataBody = req.body;
+   
+       const {statusCode,data} = await register(dataBody);
+       res.status(statusCode).send(data)
+      
+      }catch (error: any) {
+         res.status(500).send(`Something went wrong! ${error.message}`)
+     }
   })
 
   router.post("/login",async (req,res) => {
-     const {email,password} = req.body
-     const {statusCode ,data} = await userLogin({email,password})
-     res.status(statusCode).send(data);
+     try {
+        const {email,password} = req.body
+        const {statusCode ,data} = await userLogin({email,password})
+        res.status(statusCode).send(data);
+      
+      }catch (error: any) {
+         res.status(500).send(`Something went wrong! ${error.message}`)
+     }
   })
 
   export default router;

@@ -16,7 +16,7 @@ const validateJWT = (req: ExtendRequest ,res: Response,next: NextFunction) =>{
          res.status(403).json({ message: "Authorization header is missing" });
          return;
    }
-   jwt.verify(token,'Ap#arnNObiP-`7.JTr[A6/T*UKZS>?@o',async (err, payload) => {
+   jwt.verify(token,process.env.JWT_SECRET || '',async (err, payload) => {
 
         if(err){
              res.status(403).json({ message: "invalid token" });

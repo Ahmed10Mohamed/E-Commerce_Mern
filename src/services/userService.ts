@@ -88,5 +88,5 @@ export const userLogin = async ({ email, password }: loginParam) => {
   };
   
   const generateJwt = (data:any) =>{
-     return jwt.sign(data,'Ap#arnNObiP-`7.JTr[A6/T*UKZS>?@o',{expiresIn:'24h'})
+     return jwt.sign(data,process.env.JWT_SECRET || '',{expiresIn:'24h'})
   }
