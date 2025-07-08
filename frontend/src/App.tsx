@@ -6,7 +6,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Navbar />
+    <Navbar/>
       <Routes>
         <Route path="/" element={<HomePage/>}></Route>
 
