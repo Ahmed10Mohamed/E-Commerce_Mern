@@ -8,10 +8,10 @@ import { register, userLogin } from "../services/userService";
        const dataBody = req.body;
    
        const {statusCode,data} = await register(dataBody);
-       res.status(statusCode).send(data)
+       res.status(statusCode).json(data)
       
       }catch (error: any) {
-         res.status(500).send(`Something went wrong! ${error.message}`)
+         res.status(500).json(`${error.message}`)
      }
   })
 
@@ -22,7 +22,7 @@ import { register, userLogin } from "../services/userService";
         res.status(statusCode).send(data);
       
       }catch (error: any) {
-         res.status(500).send(`Something went wrong! ${error.message}`)
+         res.status(500).send(`${error.message}`)
      }
   })
 
