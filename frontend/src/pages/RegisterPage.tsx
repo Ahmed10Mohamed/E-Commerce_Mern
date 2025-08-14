@@ -5,6 +5,7 @@
   import { useRef, useState } from "react";
   import { BASE_URL } from "../constants/baseUrl";
   import { useAuth } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
   const RegisterPage =  () => {
       const firstNameRef = useRef<HTMLInputElement>(null);
@@ -12,7 +13,8 @@
       const emailRef = useRef<HTMLInputElement>(null);
       const passwordRef = useRef<HTMLInputElement>(null);
       const {login}   = useAuth();
-      
+      const navigate  = useNavigate();
+
       const [error,setError] = useState('');
 
       const onSubmet = async () =>{
@@ -62,6 +64,8 @@
         }
 
         login(email,Token.data);
+         //   return to home page after login
+      navigate('/');
   }
 
     return (
