@@ -13,8 +13,10 @@ const AuthProvider:FC<PropsWithChildren> = ({children}) =>{
        localStorage.setItem('token', token);
     }
 
+    const isAuthenticated = !!token; //this used to check you have token or no return boolean
+
    return(
-        <AuthContext.Provider value={{ userName,token,login }}>
+        <AuthContext.Provider value={{ userName , token , login ,isAuthenticated }}>
             {children}
         </AuthContext.Provider>
    )
