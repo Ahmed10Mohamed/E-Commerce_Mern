@@ -19,7 +19,8 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function HomePage() {
-  const [products,setProducts] = useState<product>([]);
+  const [products, setProducts] = useState<product[]>([]);
+
   const [error,setError] = useState(false);
   useEffect(() =>{
     const fetchData = async () =>{
@@ -42,15 +43,13 @@ export default function HomePage() {
     <Box sx={{ flexGrow: 1 ,mt:2 }}>
       <Grid container spacing={2}>
         {products.map((p) => (
-          <Grid size={4}>
-            <Item><ProductCard {...p} /></Item>
-          </Grid>
+            <Grid key={p.id} size={4}>
+              <Item><ProductCard {...p} /></Item>
+            </Grid>
+          ))}
 
-        ))}
-       
-       
-       
       </Grid>
+      
     </Box>
   );
 }
